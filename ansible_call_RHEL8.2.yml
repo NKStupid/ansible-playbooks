@@ -2,7 +2,7 @@
   hosts: localhost
   vars:
     resource_group_name: "yhu-csi-test-{{ rgVersion }}"
-    vm_name: "nrivm-{{ dpVersion }}"
+    vm_name: "csi-ansible-{{ dpVersion }}"
     location: japaneast
     vm_user: chenkiegcp2
     deployment_name: "myDeployment-{{ dpVersion }}"
