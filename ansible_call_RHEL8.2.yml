@@ -1,0 +1,74 @@
+- name: Play One -- Create Azure VM
+  hosts: localhost
+  vars:
+    resource_group_name: "yhu-csi-test-{{ rgVersion }}"
+    vm_name: "yhu-csi-test-vm-{{ dpVersion }}"
+    location: japaneast
+    vm_user: chenkiegcp2
+    deployment_name: "myDeployment-{{ dpVersion }}"
+    authorized_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC69c3Z6HTUJ1ywmCoTGJuRVQwrw6NzWmeI3A37pvJLvFXOmkcQR0ILgY0b07F78mn0EgXYIjkjbBMIRS3IRlhd1JTWdsaG+vh3W7UCpBQ74VED29sxrLwcGZDlI5zmtVR0J4h9qjbf1TBWWPoEaj6QHeuM1T5tbfXW/wjE0OLMHzfxk2f4EuUZEllFaiCHI/wstxuYwXJNn4Fa7xod9hQgLdFEsU1cg98r/ujVu4dUwR5MvIjWC+O+IlHW5/QoUiw5Hr6vvKrVsp4nrEb7ofVdk8nA8Gai9KPG2PgpVXnw7lcYICBYSQQMFA9xrT/ESNXTUSPPqEZld4R5Bw2VCI2p
+  connection: local
+  gather_facts: false
+  tasks:
+  - name: Create Azure deployment in Resource Group(No Need to Created Above)
+    azure_rm_deployment:
+      state: present
+      resource_group_name: "{{ resource_group_name }}"
+      name: "{{ deployment_name }}"
+      location: "{{ location }}"
+      template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/chenjian-RHEL8/101-vm-simple-rhel-unmanaged/azuredeploy.json'
+      parameters:
+        vmName:
+          value: "{{ vm_name }}"
+        adminUsername:
+          value: "{{ vm_user }}"
+        adminPasswordOrKey:
+          value: "{{ authorized_key }}"
+    register: azure
+
+  - name: Add new instance to host group
+    add_host:
+      hostname: "{{ item['ips'][0].public_ip }}"
+      groupname: azure_vms
+    loop: "{{ azure.deployment.instances }}"
+
+  - name: Wait for SSH to come up
+    wait_for:
+      port: 22
+      timeout: 2000
+      state: started
+  - group: name=sudo state=present
+
+  - name: Add ansible user and add it to sudo
+    user: name=ansible
+          state=present
+          createhome=yes
+    become: yes
+    become_method: "sudo"
+
+  - name: Set up authorized keys for the ansible user
+    authorized_key: user=ansible key="{{ authorized_key }}"
+  - name: echo the hostname of the vm
+    shell: hostname
+  - name: install python3
+    package:
+      name:
+        - python3
+        - python3-pip
+      state: latest
+# Play Three
+# ===========
+# Install Ansible
+- name: Install Ansible -- Play Three
+  hosts: azure_vms
+  user: ansible
+  gather_facts: false
+  tasks:
+  - name: pip install ansbile
+    action: shell pip3 install ansible --user
+    register: result
+  - name: Wait for ansible to come up
+    wait_for:
+      path: ~/.local/bin/ansible
+  - debug:
+      msg: " {{ result.stdout }}"

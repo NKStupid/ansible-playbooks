@@ -1,0 +1,52 @@
+
+# Create or update a template deployment based on a uri to the template and parameters specified inline.
+# This deploys a VM with SSH support for a given public key, then stores the result in 'azure_vms'. The result is then
+# used to create a new host group. This host group is then used to wait for each instance to respond to the public IP SSH.
+---
+- hosts: localhost
+  connection: local
+  tasks:
+#   - name: Destroy Azure Deploy
+#     azure_rm_deployment:
+#       state: absent
+#       resource_group_name: dev-ops-cle
+
+  - name: Create Azure Deploy
+    azure_rm_deployment:
+      state: present
+      resource_group_name: dev-ops-cle
+      parameters:
+        newStorageAccountName:
+          value: devopsclestorage1
+        adminUsername:
+          value: devopscle
+        dnsNameForPublicIP:
+          value: devopscleazure
+        location:
+          value: Japan East
+        vmSize:
+          value: Standard_A2
+        vmName:
+          value: ansibleSshVm
+        sshKeyData:
+          value: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC69c3Z6HTUJ1ywmCoTGJuRVQwrw6NzWmeI3A37pvJLvFXOmkcQR0ILgY0b07F78mn0EgXYIjkjbBMIRS3IRlhd1JTWdsaG+vh3W7UCpBQ74VED29sxrLwcGZDlI5zmtVR0J4h9qjbf1TBWWPoEaj6QHeuM1T5tbfXW/wjE0OLMHzfxk2f4EuUZEllFaiCHI/wstxuYwXJNn4Fa7xod9hQgLdFEsU1cg98r/ujVu4dUwR5MvIjWC+O+IlHW5/QoUiw5Hr6vvKrVsp4nrEb7ofVdk8nA8Gai9KPG2PgpVXnw7lcYICBYSQQMFA9xrT/ESNXTUSPPqEZld4R5Bw2VCI2p
+      template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sshkey/azuredeploy.json'
+    register: azure
+
+  - name: Add new instance to host group
+    add_host:
+      hostname: "{{ item['ips'][0].public_ip }}"
+      groupname: azure_vms
+    with_items: "{{ azure.deployment.instances }}"
+
+- hosts: azure_vms
+  user: devopscle
+  tasks:
+    - name: Wait for SSH to come up
+      wait_for:
+        port: 22
+        timeout: 2000
+        state: started
+    - name: echo the hostname of the vm
+      shell: hostname
+
