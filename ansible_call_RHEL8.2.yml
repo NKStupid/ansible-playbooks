@@ -17,7 +17,7 @@
       resource_group_name: "{{ resource_group_name }}"
       name: "{{ deployment_name }}"
       location: "{{ location }}"
-      template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/RHEL8-withoutBlob/101-vm-simple-rhel-unmanaged/azuredeploy.json'
+      template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/101-vm-simple-rhel-unmanaged/azuredeploy.json'
       parameters:
         vmName:
           value: "{{ vm_name }}"
