@@ -4,6 +4,7 @@
 # used to create a new host group. This host group is then used to wait for each instance to respond to the public IP SSH.
 ---
 - hosts: localhost
+  become: no
   connection: local
   tasks:
 #   - name: Destroy Azure Deploy
