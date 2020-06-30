@@ -1,0 +1,22 @@
+# Description
+# ===========
+# This playbook create an Azure VM with public IP, and open 22 port for SSH
+
+# Play One
+# ===========
+# Create Azure VM
+- name: Play One -- Create Azure VM
+  hosts: localhost
+  connection: local
+  vars:
+    resource_group: mastery2
+    vm_name: testvm
+    location: japaneast 
+  tasks:
+  # Create or update a template deployment based on uris using parameter and template links
+  - name: Create Azure Deploy
+    azure_rm_deployment:
+      resource_group: myResourceGroup
+      name: myDeployment
+      template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.json'
+      parameters_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.parameters.json'
