@@ -1,7 +1,7 @@
 - name: Play One -- Create Azure VM
   hosts: localhost
   vars:
-    resource_group_name: "ansible_master"
+    resource_group_name: "yhu-terraform-test"
     vm_name: "myvm-{{ dpVersion }}"
     location: japaneast
     vm_user: chenkiegcp2
