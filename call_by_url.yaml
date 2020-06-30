@@ -1,0 +1,20 @@
+- name: Play One -- Create Azure VM
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+  - name: Create Azure deployment in Resource Group(No Need to Created Above)
+    azure_rm_deployment:
+      state: present
+      resource_group_name: "uvw"
+      name: "uvw"
+      location: "japaneast"
+      template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/101-vm-simple-rhel-unmanaged/azuredeploy.json'
+      parameters_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/101-vm-simple-rhel-unmanaged/azuredeploy.parameters.json'
+    register: azure
+
+  - name: Add new instance to host group
+    add_host:
+      hostname: "{{ item['ips'][0].public_ip }}"
+      groupname: azure_vms
+    loop: "{{ azure.deployment.instances }}"
