@@ -9,5 +9,5 @@
       resource_group_name: "jenkins-azure"
       name: "jenkins-azure"
       location: "eastus"
-      template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/101-vm-simple-rhel-unmanaged/azuredeploy.json'
-      parameters_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/101-vm-simple-rhel-unmanaged/azuredeploy.parameters.json'
+      template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/jenkins-cicd-container/azuredeploy.json'
+      parameters_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/jenkins-cicd-container/azuredeploy.parameters.json'
