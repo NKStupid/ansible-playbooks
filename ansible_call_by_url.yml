@@ -8,6 +8,6 @@
       state: present
       resource_group_name: "jenkins-azure"
       name: "jenkins-azure"
-      location: "japaneast"
+      location: "eastus"
       template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/101-vm-simple-rhel-unmanaged/azuredeploy.json'
       parameters_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/101-vm-simple-rhel-unmanaged/azuredeploy.parameters.json'
