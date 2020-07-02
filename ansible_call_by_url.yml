@@ -1,0 +1,13 @@
+- name: Play One -- ansible_call_by_url
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+  - name: Create Azure deployment in Resource Group(No Need to Created Above)
+    azure_rm_deployment:
+      state: present
+      resource_group_name: "jenkins-azure"
+      name: "jenkins-azure"
+      location: "japaneast"
+      template_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/101-vm-simple-rhel-unmanaged/azuredeploy.json'
+      parameters_link: 'https://raw.githubusercontent.com/NKStupid/azure-quickstart-templates/master/101-vm-simple-rhel-unmanaged/azuredeploy.parameters.json'
