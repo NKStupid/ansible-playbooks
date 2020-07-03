@@ -24,6 +24,7 @@
 - name: Configure Azure VM -- Play Two
   hosts: azure_vms
   gather_facts: false
+  user: chenkiegcp2
   become: yes
   tasks:
   - name: Unarchive a file that needs to be downloaded (added in 2.0)
